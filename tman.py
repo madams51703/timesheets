@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 """
 tman v0.1.0
 simple time management scripts
@@ -351,4 +351,44 @@ if cmd == 'list':
 				print(pr + ' < ')
 			else:
 				print(pr)
+			
+if cmd == 'showall':
+	prs = os.listdir(os.path.join(os.path.expanduser(prefs['tmandir']), 'projects'))
+	if len(prs) == 0:
+		print('you have no projects!')
+	else:
+		# get metadata
+		md = readMetadata(prefs)
+		if md['active'] is not None:
+			activeProject = md['active'][0]
+		print('your projects are:')
+		for p in prs:
+			pr = p.replace('.json', '')
+			if pr == activeProject:
+				print(pr + ' < ')
+			else:
+				project = loadProject(prefs, pr)
+
+				# pretty print project
+				prettyPrintProjectToday(project, pr, width=30)
+			
+if cmd == 'showsummary':
+	prs = os.listdir(os.path.join(os.path.expanduser(prefs['tmandir']), 'projects'))
+	if len(prs) == 0:
+		print('you have no projects!')
+	else:
+		# get metadata
+		md = readMetadata(prefs)
+		if md['active'] is not None:
+			activeProject = md['active'][0]
+		print('your projects are:')
+		for p in prs:
+			pr = p.replace('.json', '')
+			if pr == activeProject:
+				print(pr + ' < ')
+			else:
+				project = loadProject(prefs, pr)
+
+				# pretty print project
+				prettyPrintProjectTodaySummary(project, pr, width=30)
 			

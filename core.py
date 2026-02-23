@@ -1,6 +1,5 @@
 import os, json, re
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, date, time
 # printing constants
 bold = '\033[1m'
 under = '\033[4m'
@@ -378,8 +377,15 @@ def prettyPrintProject(project, projectName, width=40):
 	# print each tag
 	keys = [ki for ki in project.keys()]
 	for ki in project.keys():
+		end_dt = datetime.strptime(str(project[ki]['out']), "%c")
+		start_dt = datetime.strptime(str(project[ki]['in']), "%c")
+		time_diff = end_dt-start_dt
+		total_minutes = time_diff.total_seconds()/60
+
 		print(ki.ljust(twidth), project[ki]['in'].ljust(tmwidth), project[ki]['innotes'].ljust(width), str(project[ki]['out']).ljust(tmwidth), 
-				project[ki]['outnotes'].ljust(width))
+				project[ki]['outnotes'].ljust(width),
+                total_minutes
+                )
 	   # # print tag and in timestamp, no new line
 		#print(ki.ljust(width), project[ki]['in'].ljust(width), end='')
 		## print as many rows of notes as needed
@@ -399,5 +405,113 @@ def prettyPrintProject(project, projectName, width=40):
 		## find the number of rows this tag will take
 		#notes = [project[ti][ki] for ki in ['innotes', 'outnotes']]
 
+
+
+def prettyPrintProjectToday(project, projectName, width=40):
+	"""pretty-print the given project"""
+	# print the project name
+	#print('\nproject: {s}'.format(s=projectName))
+
+	# find an appropriate column width, for now just the maximum length of any note for this project
+	#inWidth = max(len(project[ti]['innotes']) for ti in project.keys())
+	#outWidth = max(len(project[ti]['outnotes']) for ti in project.keys())
+
+	# find the number of rows
+	#from math import ceil
+	#nrows = ceil(max(len(project[ti][ki]) for ti in project.keys() for ki in ['innotes', 'outnotes']) / width)
+	
+	# print the column headers
+	today_midnight = datetime.combine(date.today(), time.min)
+
+	twidth = 16
+	tmwidth = 26
+	#print(bold + 'tag'.ljust(twidth), 'time in'.ljust(tmwidth), 'in notes'.ljust(width), 'time out'.ljust(tmwidth), 'out notes' + norm.ljust(width))
+	total_time = 0
+	
+	# print each tag
+	keys = [ki for ki in project.keys()]
+	for ki in project.keys():
+		print(projectName)
+		end_dt = datetime.strptime(str(project[ki]['out']), "%c")
+		start_dt = datetime.strptime(str(project[ki]['in']), "%c")
+		time_diff = end_dt-start_dt
+		total_minutes = time_diff.total_seconds()/60
+		is_today = today_midnight - end_dt
+		is_today_seconds = is_today.total_seconds()
+		if is_today_seconds < 0:
+			print(total_minutes,projectName,project[ki]['innotes'].ljust(width))
+			total_time = total_time + total_minutes
+	   # # print tag and in timestamp, no new line
+		#print(ki.ljust(width), project[ki]['in'].ljust(width), end='')
+		## print as many rows of notes as needed
+		#for ri in range(nrows):
+			## print innotes
+			#print(project[ki]['innotes'][ri * width : min((ri + 1) * width, len(project[ki]['innotes']))].ljust(width), end='')
+			## print the out timestamp if on the first row 
+			#if ri == 0:
+				#print(project[ki]['out'].ljust(width), end='')
+
+			## print the out notes
+		  #  print(project[ki]['outnotes'][ri * width : min((ri + 1) * width, len(project[ki]['outnotes']))].ljust(width), end='')
+	
+	# print each tag
+   # from math import ceil
+	#for ti in project.keys():
+		## find the number of rows this tag will take
+		#notes = [project[ti][ki] for ki in ['innotes', 'outnotes']]
+	print(projectName,total_time)
+
+def prettyPrintProjectTodaySummary(project, projectName, width=40):
+	"""pretty-print the given project"""
+	# print the project name
+	#print('\nproject: {s}'.format(s=projectName))
+
+	# find an appropriate column width, for now just the maximum length of any note for this project
+	#inWidth = max(len(project[ti]['innotes']) for ti in project.keys())
+	#outWidth = max(len(project[ti]['outnotes']) for ti in project.keys())
+
+	# find the number of rows
+	#from math import ceil
+	#nrows = ceil(max(len(project[ti][ki]) for ti in project.keys() for ki in ['innotes', 'outnotes']) / width)
+	
+	# print the column headers
+	today_midnight = datetime.combine(date.today(), time.min)
+	total_time = 0
+
+	twidth = 16
+	tmwidth = 26
+	#print(bold + 'tag'.ljust(twidth), 'time in'.ljust(tmwidth), 'in notes'.ljust(width), 'time out'.ljust(tmwidth), 'out notes' + norm.ljust(width))
+	
+	# print each tag
+	keys = [ki for ki in project.keys()]
+	for ki in project.keys():
+		end_dt = datetime.strptime(str(project[ki]['out']), "%c")
+		start_dt = datetime.strptime(str(project[ki]['in']), "%c")
+		time_diff = end_dt-start_dt
+		total_minutes = time_diff.total_seconds()/60
+		is_today = today_midnight - end_dt
+		is_today_seconds = is_today.total_seconds()
+		if is_today_seconds < 0:
+			total_time = total_time + total_minutes
+	   # # print tag and in timestamp, no new line
+		#print(ki.ljust(width), project[ki]['in'].ljust(width), end='')
+		## print as many rows of notes as needed
+		#for ri in range(nrows):
+			## print innotes
+			#print(project[ki]['innotes'][ri * width : min((ri + 1) * width, len(project[ki]['innotes']))].ljust(width), end='')
+			## print the out timestamp if on the first row 
+			#if ri == 0:
+				#print(project[ki]['out'].ljust(width), end='')
+
+			## print the out notes
+		  #  print(project[ki]['outnotes'][ri * width : min((ri + 1) * width, len(project[ki]['outnotes']))].ljust(width), end='')
+	
+	# print each tag
+   # from math import ceil
+	#for ti in project.keys():
+		## find the number of rows this tag will take
+		#notes = [project[ti][ki] for ki in ['innotes', 'outnotes']]
+	if total_time > 0:
+		print(projectName,total_time)
 
 
